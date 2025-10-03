@@ -1,0 +1,47 @@
+-- Referees
+CREATE TABLE referee (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    level INTEGER NOT NULL  -- e.g., 7 = Grassroots, 8 = District, 9 = Regional, 10 = Provincial, 11 = National, 12 = International
+);
+
+-- Availability
+CREATE TABLE availability (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    referee_id INTEGER NOT NULL,
+    start_utc TEXT NOT NULL, -- ISO 8601 format e.g. '2025-10-05T14:00:00Z'
+    end_utc TEXT NOT NULL,
+    FOREIGN KEY (referee_id) REFERENCES referee(id)
+);
+
+-- Matches
+CREATE TABLE match (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date_utc TEXT NOT NULL,
+    home_team TEXT NOT NULL,
+    away_team TEXT NOT NULL,
+    required_level INTEGER NOT NULL
+);
+
+-- Assignments
+CREATE TABLE assignment (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    match_id INTEGER NOT NULL,
+    referee_id INTEGER NOT NULL,
+    role TEXT NOT NULL, -- e.g. 'REF', 'AR1', 'AR2'
+    FOREIGN KEY (match_id) REFERENCES match(id),
+    FOREIGN KEY (referee_id) REFERENCES referee(id)
+);
+
+-- Reports
+CREATE TABLE report (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    match_id INTEGER NOT NULL,
+    referee_id INTEGER NOT NULL,
+    home_score INTEGER,
+    away_score INTEGER,
+    notes TEXT,
+    submitted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (match_id) REFERENCES match(id),
+    FOREIGN KEY (referee_id) REFERENCES referee(id)
+);
